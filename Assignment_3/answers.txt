@@ -1,0 +1,38 @@
+QUESTION 1: 
+	Refer to t3.txt
+
+QUESTION 2:
+	Refer to ackermann.c
+
+	Number of procedure calls:...............................172233
+	Maximum register window depth:...........................511
+	Number of register window overflows (6 register sets):...84883
+	Number of register window underflows (6 register sets):..84885 
+	Number of register window overflows (8 register sets):...83909
+	Number of register window underflows (8 register sets):..83911
+	Number of register window overflows (16 register sets):..80140
+	Number of register window underflows (16 register sets):.80142
+
+Question 3:
+	Refer to shellScript.txt (Won't let me upload .sh files)
+
+	In order to determine how long it takes to calculate ackermann(3, 6) on my computer, I 
+	wrote a shell script to execute the ackermann function 10,000 times. I ran this shell 
+	script alongside the time command in linux, and then found the average.
+	
+	Running the function 10,000 times took:
+		9.807 seconds REAL time. (0.9807ms per call)
+		8.101 seconds USER time. (0.8101ms per call)
+		2.265 seconds SYS time.  (0.2265ms per call)
+
+		Definitions can be seen below:
+
+			REAL is wall clock time - time from start to finish of the call. This is all elapsed time including time slices used by other processes and time the process spends blocked (for example if 			it is waiting for I/O to complete).
+
+    		USER is the amount of CPU time spent in user-mode code (outside the kernel) within the process. This is only actual CPU time used in executing the process. Other processes and time the 				process spends blocked do not count towards this figure.
+
+    		SYS is the amount of CPU time spent in the kernel within the process. This means executing CPU time spent in system calls within the kernel, as opposed to library code, which is still 			running in user-space. Like 'user', this is only CPU time used by the process. See below for a brief description of kernel mode (also known as 'supervisor' mode) and the system call 				mechanism.
+
+			(Source: "https://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1")
+
+	I believe this method is accurate, since you are doing the looping of the program outside of the program, you don't need to worry about the compiler making it more efficient and can achieve an 		accurate average time.

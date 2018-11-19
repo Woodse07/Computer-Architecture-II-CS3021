@@ -1,0 +1,76 @@
+add r0, #4, r9 				// Setting global variable 'G' to 4.
+
+//		**MIN FUNCTION OPTIMISED START**
+
+min:
+
+add 	r0,		r26,	r16				// V = a;
+sub 	r27,	r16, 	r0,{C}			// if(b > V)
+jge 	min0							// 		goto min0;
+xor 	r0, 	r0, 	r0				// NOP (Can't be optimised)
+add 	r0,		r27, 	r16				// V = b;
+
+min0:
+
+sub 	r28, 	r16, 	r0,{C}			// if(c > V)
+jge		min1							// 		goto min1;
+xor		r0, 	r0,		r0				// NOP (Can't be optimised)
+add		r0, 	r28, 	r16				// V = c;
+
+min1:
+
+add		r0,		r16,	r1				// r1 = V
+ret		r25, 	0						// return 
+xor		r0, 	r0,		r0				// NOP (Can't be optimised)
+
+//		**MIN FUNCTION OPTIMISED END**
+
+
+
+
+//		**P FUNCTION OPTIMISED START**
+
+p:
+
+add		r0, 	r9,		r10				// param1 = G
+add		r0, 	r26, 	r11				// param2 = i
+callr	r25, 	min						// min(G, i, j)
+add		r0, 	r27,	r12	 			// param3 = j
+add 	r0, 	r25, 	r10				// param1 = result
+add 	r0, 	r28, 	r11				// param2 = k
+callr	r25,	min						// min(min(G, i, j), k, l)
+add 	r0, 	r29, 	r12				// param3 = l
+ret		r25, 	0						// return result
+xor		r0, 	r0,		r0				// NOP (Can't be optimised)
+
+//		**P FUNCTION OPTIMISED END**
+
+
+
+
+//		**GCD FUNCTION OPTIMISED START**
+
+gcd:
+
+sub 	r27,	#0,		r0,{C}			// if(b != 0)
+jne		gcd0							// 		goto gcd0;
+add		r0, 	r26, 	r1				// r1 = a
+ret		r25, 	0						// return a;
+xor 	r0,		r0,		r0				// NOP (Can't be optimised)
+
+gcd0:
+
+add 	r0,		r26, 	r10				// param1 = a;
+callr	r25,	mod						// mod(a, b);
+add		r0,		r27,	r11				// param2 = b;
+add 	r0,		r27,	r10				// param1 = b;
+callr	r25,	gcd						// gcd(b, a%b);
+add 	r0, 	r25,	r11				// param2 = a % b;
+ret		r25,	0						// ret result
+xor		r0,		r0,		r0				// NOP (Can't be optimised)
+
+//		**GCD FUNCTION OPTIMISED END**
+
+
+
+

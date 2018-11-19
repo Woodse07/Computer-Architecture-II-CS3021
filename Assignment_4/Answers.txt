@@ -1,0 +1,27 @@
+Question 1: See Question_1 directory.
+
+Question 2:
+	Resulting value in R1 and Clock cycles needed to execute the code..
+		With ALU Forwarding enabled: R1 = 15 and Clock Cycles = 10
+		With ALU Forwarding disabled and CPU data dependency interlocks enabled: R1 = 15 and Clock cycles = 18
+		With ALU Forwarding disabled and CPU data dependency interlocks disabled: R1 = 6 and Clock Cycles = 10
+
+	The reason that the clock cycles are faster with ALU forwarding because it is an optimization in pipelined CPUs to limits performance deficits which occur due to pipelind stalls. For this example, if ALU Forwarding is turned off, the pipeline must be stalled to wait for until the result of one addition is done, before continuing on to the other. 
+
+	The reason the R1 is wrong when CPU data dependency interlocks are disabled is because this is supposed to be a safety mechanism. CPU data dependency interlocks occur when a load hazard is detected, resulting in a pipeline stall. Basically the pipeline is not stalling to wait for the other add instruction to complete, therefore accessing the wrong values and getting the wrong answer. 
+
+
+Question 3:
+	Instruction executed: 39
+	Clock cycles: 51
+	These numbers aren't equal because some instructions take longer than 1 clock cycle, a lot of the instructions may require stalls.
+
+	With Branch interlock enabled..
+	Instructions executed: 39
+	Clock cycles: 53
+	The clock cycles are higher here because with branch interlock we introduce a nop after a branch or jump instruction and stall the pipeline every time, which isn't very optimal. In contrast with branch prediction we may actually correctly predict the branch and not have to delay the pipeline, saving 1 clock cycle. In the case that the branch is not in the BTB or the prediction is wrong, we just stall the pipeline to update the BTB.
+
+	Swapping shift instruction with Branch Prediction enabled..
+	Instructions executed: 39
+	Clock cycles: 47
+	Swapping the shift instructions saves a clock cycle every time they are executed. This is because is you want to execute 'SRLi R2, R2, 01' directly after 'LD R2, R0 00' then you will need to stall the pipeline to wait for R2 to be stored. However, if you put the other shift instruction before this, it does not need to wait for R2 and can be executed immdediately, and by the time this is done, R2 will be stored and no delay is required for the next shift instruction.
