@@ -1,0 +1,85 @@
+QUESTION 1
+
+L = bytes per cache line
+K = cache lines per set
+N = number of sets
+
+(1) First 4 bits of address used as offset.
+(2) The next log2(N) bits select the set.
+(3) Remaining bits form the tag.
+a, a+16, a+32, a+48, a+64, a+80, a+96, a+112, a+128
+
+
+
+
+(i)
+128 byte 1-way cache with 16 bytes per line (direct mapped)
+L = 16
+K = 1...(Direct mapped)
+N = 8...(L x K x N = 16 x 1 x 8 = 128)
+
+log2(N) = 3
+9 bits to form tag..
+
+
+
+
+
+(ii)
+128 byte 2-way set associative cache with 16 bytes per line
+L = 16
+K = 2
+N = 4
+
+log2(N) = 2
+10 bits to form tag..
+
+Taking first 5 hex addresses for example.. 
+		            set offset
+                     || ||||
+0x0000 = 0000 0000 0000 0000 miss
+0x0004 = 0000 0000 0000 0100 hit
+0x000c = 0000 0000 0000 1100 hit
+0x2200 = 0010 0010 0000 0000 miss
+0x00d0 = 0000 0000 1101 0000 miss
+
+Set | V | Tag    
+00  | 1 | 0010 0010 00
+01  | 1 | 0000 0000 11
+10  |   |
+11  |   |
+
+
+(iii)
+128 byte 4-way set associative cache with 16 bytes per line
+L = 16
+K = 4
+N = 2
+
+log2(N) = 1
+11 bits to form tag..
+
+Taking first 5 hex addresses for example.. 
+		             set offset
+                      |   |
+0x0000 = 0000 0000 0000 0000 miss
+0x0004 = 0000 0000 0000 0100 hit
+0x000c = 0000 0000 0000 1100 hit
+0x2200 = 0010 0010 0000 0000 miss
+0x00d0 = 0000 0000 1101 0000 miss
+
+Set | V | Tag    
+0   | 0 | 0010 0010 000
+1   | 1 | 0000 0000 110
+
+
+
+
+(iv)
+128 byte 8-way associative cache with 16 bytes per line (fully associative)
+L = 16
+K = 8
+N = 1
+
+log2(N) = 0
+11 bits to form tag..
