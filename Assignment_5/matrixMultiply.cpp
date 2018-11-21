@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         cnt0++;
 
         t99 = getWallClockMS();
-        if ((t99 - t0) > NSECONDS*1000)
+        if ((t99 - t0) > NSECONDS*10)
             break;
 
     }
@@ -100,19 +100,28 @@ int main(int argc, char **argv) {
     while (1) {
 
         // matB_transposed = tranpose matB
-        // ADD YOUR CODE HERE
+        for(UINT row = 0; row < N; row++){
+			for(UINT col = 0; col < N; col++){
+				matB_transposed[col][row] = matB[row][col];
+			}
+		}		
+
 
         // matD = matA*matB_transposed
-        // ADD YOUR CODE HERE
-
-
-
-
+        for (UINT row = 0; row  < N; row++) {
+            for (UINT col = 0; col < N; col++) {
+                UINT sum = 0;
+                for (UINT k = 0; k < N; k++)
+                    sum += matA[row][k]*matB_transposed[k][col];
+                matD[row][col] = sum;
+            }
+		}
+        
 
         cnt1++;
 
         t99 = getWallClockMS();
-        if ((t99 - t0) > NSECONDS*1000)
+        if ((t99 - t0) > NSECONDS*10)
             break;
 
     }
@@ -122,6 +131,7 @@ int main(int argc, char **argv) {
     //
     // check that matC and matD identical
     //
+
     UINT err = 0;
     for (UINT row = 0; row  < N; row++) {
         for (UINT col = 0; col < N; col++) {

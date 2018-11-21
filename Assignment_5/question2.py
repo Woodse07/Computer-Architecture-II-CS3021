@@ -32,6 +32,7 @@ class Cache(object):
 		print("Offest: " + str(self.Offset))
 		print("Set selector bits length: " + str(self.set_selector_bits_length))
 		print("tag bits length: " + str(self.tag_bits_length))
+		print("")
 
 	def hex_to_binary(self, hex):
 		binary = bin(int(hex, 16))[2:].zfill(16)
@@ -39,12 +40,13 @@ class Cache(object):
 
 	def disect_binary(self, binary):
 		binary_minus_offset = binary[:12]
+		offset = binary[12:]
 		bit_selector_bits = binary_minus_offset[-int(self.set_selector_bits_length):]
 		tag_bits = binary_minus_offset[:-int(self.set_selector_bits_length)]
 		if self.N is 1:
 			tag_bits = bit_selector_bits
 			bit_selector_bits = "0"
-		return bit_selector_bits, tag_bits
+		return bit_selector_bits, tag_bits, offset
 
 	def find_lru(self, timestamps):
 		oldest = min(timestamps)
@@ -58,23 +60,22 @@ class Cache(object):
 					if row[2][0] == 0:
 						row[2][1] = tag_bits
 						row[2][0] = 1
-						return("miss:(")
+						return("MISS")
 					elif row[2][0] == 1:
 						if row[2][1] == tag_bits:
-							return("hit!")
+							return("HIT")
 						else:
 							row[2][1] = tag_bits
-							return("miss:(")
+							return("MISS")
 
 				elif self.N is 1:
 					timestamps = []
-					#print("Least recently used: " + str(lru))
 					for index in range(0, self.K):
 						timestamps.append(row[2+index][2])
 						if row[2+index][0] == 1:
 							if row[2+index][1] == tag_bits:
 								row[2+index][2] = time.time()
-								return("hit!")
+								return("HIT")
 
 					row[1] = self.find_lru(timestamps)
 					lru = row[1]
@@ -83,22 +84,21 @@ class Cache(object):
 						row[2+lru][1] = tag_bits
 						row[2+lru][0] = 1
 						row[2+lru][2] = time.time()
-						return("miss:(")
+						return("MISS")
 
 					elif row[2+lru][0] == 1:
 						row[2+lru][1] = tag_bits
 						row[2+lru][2] = time.time()
-						return("miss:(")
+						return("MISS")
 
 				else:
 					timestamps = []
-					#print("Least recently used: " + str(lru))
 					for index in range(0, self.K):
 						timestamps.append(row[2+index][2])
 						if row[2+index][0] == 1:
 							if row[2+index][1] == tag_bits:
 								row[2+index][2] = time.time()
-								return("hit!")
+								return("HIT")
 
 					row[1] = self.find_lru(timestamps)
 					lru = row[1]
@@ -107,37 +107,21 @@ class Cache(object):
 						row[2+lru][1] = tag_bits
 						row[2+lru][0] = 1
 						row[2+lru][2] = time.time()
-						return("miss:(")
+						return("MISS")
 
 					elif row[2+lru][0] == 1:
 						row[2+lru][1] = tag_bits
 						row[2+lru][2] = time.time()
-						return("miss:(")
+						return("MISS")
 		
-
-
-		
-		
-	
-
-def make_cache(L, K, N):
-	cache = Cache(L, K, N)
-	return cache
-
-
-
-myCache = Cache(16,8,1)
-
 input = ["0000","0004","000c","2200","00d0","00e0","1130","0028",
 		 "113c","2204","0010","0020","0004","0040","2208","0008",
 		 "00a0","0004","1104","0028","000c","0084","000c","3390",
 		 "00b0","1100","0028","0064","0070","00d0","0008","3394"]
 
+myCache = Cache(16,8,1)
 
 myCache.print_stats()
-print("")
-print(myCache.cache_matrix)
-print("")
 hits = 0
 misses = 0
 for hex in input:
@@ -146,18 +130,14 @@ for hex in input:
 	bit_selector_bits = disected_bits[0]
 	tag_bits = disected_bits[1]
 	hit_or_miss = myCache.hit_or_miss(bit_selector_bits, tag_bits)
-	if hit_or_miss == "hit!":
+	if hit_or_miss == "HIT":
 		hits += 1
 	else:
 		misses += 1
-	print(hex + " " + bit_selector_bits + " was a " + str(hit_or_miss))
-	#print("binary: " + binary)
-	#print("tag_bits: " + tag_bits)
+	print("0x" + hex + " " + tag_bits + " " + bit_selector_bits + " " + disected_bits[2] + " was a " + str(hit_or_miss))
 
-	#print(myCache.cache_matrix)
-	#print("")
-print("Hits: " + str(hits))
-print("Misses: " + str(misses))
+print("HIT COUNT: " + str(hits))
+print("MISS COUNT: " + str(misses))
 
 
 
