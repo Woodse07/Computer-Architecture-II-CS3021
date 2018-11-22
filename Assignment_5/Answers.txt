@@ -1,5 +1,7 @@
 QUESTION 1
 
+**SEE QUESTION1.PDF FOR ANSERS**
+
 L = bytes per cache line
 K = cache lines per set
 N = number of sets
@@ -83,3 +85,10 @@ N = 1
 
 log2(N) = 0
 11 bits to form tag..
+
+
+QUESTION 2
+**SEE QUESTION2.PY**
+
+QUESTION 3
+**SEE QUESTION3.PNG AND MATRIXMULTIPLY.CPP**
