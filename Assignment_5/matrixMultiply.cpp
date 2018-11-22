@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
         cnt0++;
 
         t99 = getWallClockMS();
-        if ((t99 - t0) > NSECONDS*10)
+        if ((t99 - t0) > NSECONDS*1000)
             break;
 
     }
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
             for (UINT col = 0; col < N; col++) {
                 UINT sum = 0;
                 for (UINT k = 0; k < N; k++)
-                    sum += matA[row][k]*matB_transposed[k][col];
+                    sum += matA[row][k]*matB_transposed[col][k];
                 matD[row][col] = sum;
             }
 		}
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
         cnt1++;
 
         t99 = getWallClockMS();
-        if ((t99 - t0) > NSECONDS*10)
+        if ((t99 - t0) > NSECONDS*1000)
             break;
 
     }
