@@ -1,0 +1,102 @@
+QUESTION 2 (Taken from 2017 Q1)
+
+(i)
+A pipelined processor is one where each instruction is broken up into smaller parts and executed in parallel.
+
+Benefits of pipelining are that is speeds up the execution time of instructions.
+
+Organization and operation of the DLX five stage pipeline:
+5 stages which each instruction passes through:
+	1. IF (Instruction Fetch).
+	2. ID (Instruction Decode).
+	3. EX (Execution).
+	4. MA (Memory Access).
+	5. WB (Write Back).
+
+i	|IF|ID|EX|MA|WB|  |  |  |  |
+i+1 |  |IF|ID|EX|MA|WB|  |  |  |
+i+2 |  |  |IF|ID|EX|MA|WB|  |  |
+i+3 |  |  |  |IF|ID|EX|MA|WB|  |
+i+4 |  |  |  |  |IF|ID|EX|MA|WB|
+
+Where i is the instruction and each column is one clock cycle
+
+
+
+(ii)
+Data hazards are hazards that occur when instructions that exhibit data dependence modify data in different stages of the pipeline. 
+
+Techniques to prevent stalls & overcome data hazards:
+	1. Pipeline Forwarding: 
+		All registers between various stages of the pipeline are clocked synchronously.
+
+		The ALU's results from the two 'previous' instructions can be forwared to the ALU
+		inputs from the ALUout0 and ALUout1 registers before the results are written back to
+		the register files.
+
+		Tag ALUout0 and ALUout1 with the destination register.
+
+		The EX stage checks for source register in order of ALUout0, ALUout1, and A/B.
+
+	2. Two-Phase Clocking:
+		DLX register gets written in the first half of the cycle (WB stage), and then read in
+		the second half of the cycle (ID stage). 
+
+		This removes the need for a third forwarding register.
+		
+r1 <- r2 + r3   |IF|ID|EX|MA|W1|  |  |  |
+r4 <- r1 + r2   |  |IF|ID|E2|MA|WB|  |  |
+r10 <- r1 + r4  |  |  |IF|ID|E3|MA|WB|  |
+r11 <- r4 + r1  |  |  |  |IF|R4|E5|MA|WB|
+
+W1 and R4 = The WB stage is the first half of the two-phase clocking and the ID stage is 
+the second half, in the ID stage the correct value of R1 is read due to this two phase 
+access of the register file.
+
+E2 = Read R1 from ALUout0
+
+E3 = Read R4 from ALUout0 and R1 from ALUout1
+
+E5 = Read R1  from ALUout1
+
+R1 is defined in the first instruction and used in all subsequent instructions.
+Similarly R4 and R1 are defined and then used. 
+This can lead to data dependence but as shown pipeline forwarding and two-phase clocking
+overcome this.
+
+
+
+(iii)
+
+A load hazard is a type of hazard that occurs when an instruction tries to use data that is
+being loaded from memory. We can avoid hazards through instruction rescheduling. 
+
+(a)
+
+ld r1, 0(r2)   |IF|ID|EX|MA|WB|  |
+add r1, r1, r1 |  |IF|ID|EX|MA|WB|
+
+Instruction trying to execute based on data that has yet to be loaded.
+
+Fix:
+ld r1, 0(r2)   |IF|ID|EX|MA|WB|  |  |  |
+nop 0, 0, 0    |  |IF|ED|EX|MA|WB|  |  |
+nop 0, 0, 0    |  |  |IF|ID|EX|MA|WB|  |
+add r1, r1, r1 |  |  |  |IF|ID|EX|MA|WB|
+
+
+(b)
+
+ld r1, 0(r2) |IF|ID|EX|MA|WB|  |
+bnez r1, L   |  |IF|ID|EX|MA|WB|
+
+Instruction trying to execute based on data that has yet to be loaded.
+
+Fix:
+ld r1, 0(r2) |IF|ID|EX|MA|WB|  |  |  |
+nop 0, 0, 0  |  |IF|ED|EX|MA|WB|  |  |
+nop 0, 0, 0  |  |  |IF|ED|EX|MA|WB|  |  
+bnez r1, L   |  |  |  |IF|ID|EX|MA|WB|
+
+**not sure if this is right...
+
