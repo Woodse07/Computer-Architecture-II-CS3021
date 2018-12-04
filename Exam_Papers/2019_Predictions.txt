@@ -1,0 +1,11 @@
+QUESTION 1: IA32 / x64.. Maaaybe RISC I
+
+
+QUESTION 2: Pipelining
+
+
+QUESTION 3: Cache basics + Cache hits/misses
+
+
+QUESTION 4: Cache Coherency
+

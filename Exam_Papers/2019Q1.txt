@@ -1,0 +1,173 @@
+QUESTION 1 (Taken from 2018 Q1)
+
+(i)
+IA32 vs x64
+
+Conventions:
+1.
+IA32: Result returned in eax.
+x64: Result return in rax.
+
+2.
+IA32: eax, ecx and edx are volatile. (Not preserved accross calls)
+x64: rax, rcx, rdx, r8, r9, r10 and r11 are all volatile. (Not preserved accross calls)
+
+3.
+IA32: Stack alligned on 4 bit boundary.
+x64: Stack alligned on 8 bit boundary.
+
+4.
+IA32: Caller removes parameters.
+x64: Caller allocates 32 bytes shadow space. (if more than 4 parameters, allocate 32 bytes shadow space and store the next parameters right to left.)
+
+5.
+x64: First 4 parameters passed in rcx, rdx, r8, r9, rest passed on stack right to left.
+
+
+Stacks:
+
+IA32:				
+	p2					<- Pushed Parameters
+	p1
+	p0
+	Return address
+	Saved ebp[ebp]
+	Local var 0			<- Local Variables
+	Local var 1
+	ebx					<- Saved Registers
+	esi
+
+x64:
+						<- Rbp
+
+	Parameter 5
+	Shadow Space		<- 32 bytes shadow space
+	Shadow Space		
+	Shadow Space
+	Shadow Space
+	Return address[rsp]
+
+
+Register sets:
+
+IA32:
+	eax, ebx, ecx, edx,
+	esi, edi, ebp, esp.
+
+x64:
+	rax, rbx, rcx, rdx,
+	rsi, rdi, rbp, rsp,
+	r8 ,  r9, r10, r11,
+	r12, r13, r14, r15.
+
+
+(ii)
+x64 architecture has an additional 8 registers compared to IA32. {r8-r15}.
+64 bit arithmetic.
+Shadow space to hold paramters.
+
+
+(iii)
+
+IA32:----------------------------------------------------
+
+public	max				; export function name
+max:		
+	push ebp			; push frame pointer
+	mov ebp, esp		; update frame pointer
+	sub esp, 4			; 1 local var, decremement by 4
+	mov eax, [ebp+8]	; eax = a
+	mov [ebp-4], eax	; v = a
+	mov eax, [ebp+12]	; eax = b
+	cmp eax, [ebp-4]	; if(b > v)
+	jlt maxexit			; {
+	mov [ebp-4], eax	;	v = b
+maxexit:				; } 
+	mov eax, [ebp+16]	; eax = c
+	cmp eax, [ebp-4]	; if(c > v)
+	jlt maxexit2		; {
+	mov [ebp-4], eax	; 	v = c
+maxexit2:				; }
+	mov eax, [ebp-4]	; eax = v
+	mov esp, ebp		; restore esp
+	pop ebp				; restore ebp
+	ret 0				; return
+
+public p				; export function name
+p:				
+	push ebp			; push frame pointer
+	mov ebp, esp		; update frame pointer
+	push [ebp+12]		; pushing j
+	push [ebp+8]		; pushing i
+	push g				; pushing g
+	call max			; mac(g, i, j)
+	add esp, 12			; removing parameters.. (3*4)
+	push [ebp+20]		; pushing l
+	push [ebp+24]		; pushing k
+	push eax			; pushing result
+	call max			; max(max(g, i, j), k, l)
+	add esp, 12			; removing parameters
+	mov esp, ebp		; restoring esp
+	pop ebp				; restoring ebp
+	ret 0				; return
+
+;Below is declaring global variable g
+.data
+public g
+g DWORD 4
+.code
+
+-----------------------------------------------------------
+
+
+x64:-------------------------------------------------------
+
+public max			; export function name
+max:				
+	mov rax, rcx	; rax = a
+	mov rbx, rax	; v = rax
+	mov rax, rdx	; rax = b
+	cmp rax, rbx	; if(b > v)
+	jlt maxExit		; {
+	mov rbx, rax	; 	v = b
+maxExit:			; }
+	mov rax, r8		; rax = c
+	cmp rax, rbx	; if(c > v)
+	jlt maxExit2	; {
+	mov rbx, rax	;	v = c
+maxExit2:			; }
+	mov rax, rbx	; rax = v
+	ret				; return
+
+public p			; export function name
+p:
+	sub rsp, 32		; Allocate 32 shadow space
+	mov rax, rdx	; temp = j
+	mov rbx, r8		; temp2 = k
+	mov r10, rcx	; temp3 = i
+	mov rcx, g		; param1 = g
+	mov rdx, r10	; param2 = i
+	mov r8, rax		; param3 = j
+	push rbx		; save rbx
+	call max		; max(g, i, j)
+	pop rbx			; restore rbx
+	mov rcx, rax	; param1 = max(g, i, j)
+	mov rdx, rbx	; param2 = k
+	mov r8, r9		; param3 = l
+	call max		; max(max(g, i, j), k, l)
+	add rsp, 32		; Deallocate shadow space
+	ret				; return 
+
+;Below is delcaring global var g
+.data
+public g
+variable g.
+g QWORD 4
+.code
+
+-----------------------------------------------------------
+
+
+
+
+
