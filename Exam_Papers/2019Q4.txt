@@ -1,0 +1,46 @@
+QUESTION 4 (Taken from 2016 Q2)
+
+(i)
+Since the RISC-I microprocessor core is so simple, there's plenty on chip area left for
+multiple register sets. 
+
+Every function call allocates a new 'window' of registers from a circular on-chip register
+file.
+
+Registers in a register window are used for specific purposes:
+	r26..r31: Parameters passed to this function
+	r16..r25: Local variables & intermediate results
+	r10..r15: Parameters for next function
+	r0....r9: Global registers common to all functions
+
+**EXAMPLE IN NOTEPAD**
+
+
+(ii)
+Register window Overflow/Underflow are needed for when functions nest too deply and CPU runs
+out of register windows.
+
+Overflows will occur on a CALL/CALLR, Underflows will occur on a RET.
+
+If the maximum number of windows are being used, and the function is called, we get an 
+overflow.
+
+If the number of windows being used is 2, and we return, we get an underflow. This is because
+we always need 2 valid register windows in register file.
+
+
+(iii)
+
+
+At entry of function:
+if(wused == nwindows)
+	overflows++;
+else
+	wuse++;
+
+At exit of function:
+if(wused == 2)
+	underflows++;
+else
+	wused--;
+
