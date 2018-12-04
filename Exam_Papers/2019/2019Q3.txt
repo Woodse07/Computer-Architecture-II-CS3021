@@ -1,0 +1,117 @@
+QUESTION 3 (Taken from 2018 Q3)
+
+(i)
+A cache is a temporary stoarage space or memory that allows fast access to data that is often used. It sits logically between the CPU and main memory.
+
+L = The number of bytes per line. 
+K = The nmber of lines per set.
+N = The number of sets.
+
+L * K * N = Size of the cache(No. of bytes)
+
+Cache is divided into two parts; TAGS and DATA.
+
+Diagram of how a cache is organised:
+**Refer to notepad for diagrams**
+
+
+How is a data item accessed in a cache?
+Consider an address that maps to set1 in the cache. The set1 tags of all directories are
+compared simultaneously to the incoming tag address. If a hit occurs, the corresponding data
+is returned offset within the cache line **timestamp of this cache line is updated*.
+The k data line in the set are access concurrently with the directory entries so that 
+if a hit occurs it can be routed quickly to the output buffers. If a miss occurs, then 
+data is retrieved from memory and gets placed in a cache line within the set and the
+corresponding tag is updated.
+
+
+(ii)
+Assume that:
+	1. The low 4 bits of the address are used as offset and the next log2(N) bits select 
+	   the set.
+	2. The cache is initially empty.
+	3. LRU replacement policy is used. 
+
+
+(1) 64 byte direct mapped cache with 16 bytes per line.
+L = 16
+K = 1
+N = 4
+Offset = 4 bits
+Selector_bits = log2(4) = 2
+Tag_bits = 16(length of address) - 4 - 2 = 10
+
+ANSWER:
+**WORKINGS ON PAPER**
+
+0x000 | 0000 0000 00 | 00 | 0000 | MISS
+0x010 | 0000 0000 00 | 01 | 0000 | MISS
+0x020 | 0000 0000 00 | 10 | 0000 | MISS
+0x030 | 0000 0000 00 | 11 | 0000 | MISS
+0x034 | 0000 0000 00 | 11 | 0100 | HIT
+0x020 | 0000 0000 00 | 10 | 0000 | HIT
+0x010 | 0000 0000 00 | 01 | 0000 | HIT
+0x00C | 0000 0000 00 | 00 | 1100 | HIT
+0x050 | 0000 0000 01 | 01 | 0000 | MISS
+0x040 | 0000 0000 01 | 00 | 0000 | MISS
+0x02C | 0000 0000 00 | 10 | 1100 | HIT
+0x008 | 0000 0000 00 | 00 | 1000 | MISS
+0x030 | 0000 0000 00 | 11 | 0000 | HIT
+0x020 | 0000 0000 00 | 10 | 0000 | HIT
+0x010 | 0000 0000 00 | 01 | 0000 | MISS
+0x000 | 0000 0000 00 | 00 | 0000 | HIT
+
+HIT COUNT: 8
+MISS COUNT: 8
+
+
+(2) 64 byte fully associative cache with 16 bytes per line.
+L = 16
+L = 4
+N = 1
+Offset = 4 bits
+Selector_bits = log2(1) = 0
+Tag_bits = 16 - 4 = 12
+
+ANSWER:
+**WORKINGS ON PAPER**
+
+0x000 | 0000 0000 0000 | 0000 | MISS
+0x010 | 0000 0000 0001 | 0000 | MISS
+0x020 | 0000 0000 0010 | 0000 | MISS
+0x030 | 0000 0000 0011 | 0000 | MISS
+0x034 | 0000 0000 0011 | 0100 | HIT
+0x020 | 0000 0000 0010 | 0000 | HIT
+0x010 | 0000 0000 0001 | 1100 | HIT
+0x00C | 0000 0000 0000 | 0000 | HIT
+0x050 | 0000 0000 0101 | 0000 | MISS
+0x040 | 0000 0000 0100 | 1100 | MISS
+0x02C | 0000 0000 0010 | 1000 | MISS
+0x008 | 0000 0000 0000 | 0000 | HIT
+0x030 | 0000 0000 0011 | 0000 | MISS
+0x020 | 0000 0000 0010 | 0000 | HIT
+0x010 | 0000 0000 0001 | 0000 | MISS
+0x000 | 0000 0000 0000 | 0000 | HIT
+
+HIT COUNT: 7
+MISS COUNT: 9
+
+
+(iii)
+Consider two caches
+	1. K=4, N=1, L=16
+	2. K=1, N=4, L=16
+
+	Increase address by 16 each time, as this is the line size.
+	Caches can contain 4 addresses, sequence comprises of 5 addresses.
+	5 addresses won't fit into 4.
+
+	Fully Assosciative:
+	Only 4 addresses can fit in the 4-way cache, so due to the LRU replacement policy,
+	every access will be a miss.
+	
+	Direct Mapped:
+	Since only addresses a and a+64 will conflict with each other as they map to the same 
+	set, there will be 2 misses and 3 hits per cycle of 5 addresses.
+
+
