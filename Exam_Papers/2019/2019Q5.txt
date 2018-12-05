@@ -1,0 +1,60 @@
+QUESTION 5 (Taken from 2018 Q2)
+
+(i)
+
+
+<------virtual address--------->
+| index1  | index2  | offset   |
+<---10---><---10---><----12---->
+<--virtual page #-->
+(Better diagram in copy)
+
+The MMU allocates virtual addresses to processes in the above structure.
+
+When converting, first 10 bits of the address signify a location in the primary page table
+of the process. The address stored at that index is the location of one of many secondary
+page tables.
+
+The second index is then used to lookup that particular secondary page table for the physical
+ram page.
+
+The constant offset stays the same after conversion, pointing to the location of the data
+within the physical ram page.
+
+If during access the valid bit on the primary or secondary table is not 1, the child it points
+to needs to be allocated before accessing. 
+
+TLB(translation lookaside buffer) may be used by the MMU to associative cache a number of page
+tables which are frequently accessed.
+
+**Diagram in copy**
+
+
+
+(ii)
+
+Two level page table is more memory usage efficient as virtual page is split into two 10 bit
+addresses.
+
+Each primary and secondary page table is only 1024 lines long. 
+
+Same functionality is still provided.
+
+Secondary tables only need to be created as they're required.
+
+
+1 level page table:
+	Min: 4MB
+	Max: 4MB
+
+2 level page table:
+	Min: 4KB+4KB
+	Max: 4KB+4MB
+
+
+
+(iii)
+
+**Diagram in copy**
+
+
